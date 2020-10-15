@@ -653,5 +653,12 @@
       <description>Create a batch layer in Spark for our flight and weather app</description>
     </archetype>
   </archetypes>
+    <archetype>
+      <groupId>edu.uchicago.mpcs53013</groupId>
+      <artifactId>hadoop-thrift-example-archetype</artifactId>
+      <version>6.0.0</version>
+      <repository>https://oss.sonatype.org/content/repositories/releases</repository>
+      <description>Creates an example program that serializes thrift students to HDFS sequence files</description>
+    </archetype>
 
 </archetype-catalog>
