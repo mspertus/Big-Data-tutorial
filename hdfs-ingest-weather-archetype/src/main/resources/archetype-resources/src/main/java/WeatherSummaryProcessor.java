@@ -18,6 +18,8 @@ import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
 import edu.uchicago.mpcs53013.weatherSummary.WeatherSummary;
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 
 
 public abstract class WeatherSummaryProcessor {
@@ -39,38 +41,36 @@ public abstract class WeatherSummaryProcessor {
 		return Double.parseDouble(s.trim());
 	}
 
-	void processLine(String line, File file) throws IOException {
+	void processLine(String line, String archiveEntryName) throws IOException {
 		try {
-			processWeatherSummary(weatherFromLine(line), file);
+			processWeatherSummary(weatherFromLine(line), archiveEntryName);
 		} catch(MissingDataException e) {
 			// Just ignore lines with missing data
 		}
 	}
 
-	abstract void processWeatherSummary(WeatherSummary summary, File file) throws IOException;
-	BufferedReader getFileReader(File file) throws FileNotFoundException, IOException {
-		if(file.getName().endsWith(".gz"))
-			return new BufferedReader
-					     (new InputStreamReader
-					    		 (new GZIPInputStream
-					    				 (new FileInputStream(file))));
-		return new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+	abstract void processWeatherSummary(WeatherSummary summary, String fileName) throws IOException;
+	BufferedReader getFileReader(InputStream is) throws FileNotFoundException, IOException {
+		return new BufferedReader(new InputStreamReader(new GZIPInputStream(is)));
 	}
 	
-	void processNoaaFile(File file) throws IOException {		
-		BufferedReader br = getFileReader(file);
+	void processNoaaFile(InputStream is, String archiveEntryName) throws IOException {
+		BufferedReader br = getFileReader(is);
 		br.readLine(); // Discard header
 		String line;
 		while((line = br.readLine()) != null) {
-			processLine(line, file);
+			processLine(line, archiveEntryName);
 		}
 	}
 
-	void processNoaaDirectory(String directoryName) throws IOException {
-		File directory = new File(directoryName);
-		File[] directoryListing = directory.listFiles();
-		for(File noaaFile : directoryListing)
-			processNoaaFile(noaaFile);
+	void processNoaaTarFile(InputStream is) throws IOException {
+		TarArchiveInputStream tarArchiveInputStream = new TarArchiveInputStream(is);
+		TarArchiveEntry entry;
+		while ((entry = (TarArchiveEntry)tarArchiveInputStream.getNextEntry()) != null) {
+			if(!entry.getName().endsWith(".gz"))
+				continue;
+			processNoaaFile(tarArchiveInputStream, entry.getName());
+		}
 	}
 	
 	WeatherSummary weatherFromLine(String line) throws NumberFormatException, MissingDataException {
