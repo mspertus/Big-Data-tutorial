@@ -23,7 +23,7 @@ object StreamFlights {
   hbaseConf.set("hbase.zookeeper.quorum", "localhost")
   
   val hbaseConnection = ConnectionFactory.createConnection(hbaseConf)
-  val weatherDelaysByRoute = hbaseConnection.getTable(TableName.valueOf("weather_delays_by_route"))
+  val weatherDelaysByRoute = hbaseConnection.getTable(TableName.valueOf("weather_delays_by_route_v2"))
   val latestWeather = hbaseConnection.getTable(TableName.valueOf("latest_weather"))
   
   def getLatestWeather(station: String) = {
