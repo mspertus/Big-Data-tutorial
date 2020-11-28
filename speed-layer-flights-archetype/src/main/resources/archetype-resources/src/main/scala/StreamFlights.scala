@@ -78,7 +78,7 @@ object StreamFlights {
     }
     weatherDelaysByRoute.increment(inc)
     return "Updated speed layer for flight from " + kfr.originName + " to " + kfr.destinationName
-}
+  }
   
   def main(args: Array[String]) {
     if (args.length < 1) {
@@ -124,4 +124,4 @@ object StreamFlights {
     ssc.start()
     ssc.awaitTermination()
   }
-
+}

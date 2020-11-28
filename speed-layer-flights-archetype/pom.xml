@@ -4,7 +4,7 @@
 
   <groupId>edu.uchicago.mpcs53013</groupId>
   <artifactId>speed-layer-flights-archetype</artifactId>
-  <version>6.0.1</version>
+  <version>6.0.2</version>
   <packaging>maven-archetype</packaging>
 
   <name>Speed Layer Flights Archetype</name>
