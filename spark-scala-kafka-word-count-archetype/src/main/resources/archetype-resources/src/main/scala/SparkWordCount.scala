@@ -50,8 +50,7 @@ object SparkWordCount {
     val ssc = new StreamingContext(sparkConf, Seconds(2))
 
     // Create direct kafka stream with brokers and topics
-    val topicsArr = Array(topics)
-      val topicsSet = topics.split(",").toSet
+    val topicsSet = topics.split(",").toSet
     val kafkaParams = Map[String, Object](
       "bootstrap.servers" -> brokers,
       "key.deserializer" -> classOf[StringDeserializer],

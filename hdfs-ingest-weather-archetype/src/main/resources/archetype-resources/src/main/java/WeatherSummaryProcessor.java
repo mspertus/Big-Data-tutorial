@@ -75,7 +75,7 @@ public abstract class WeatherSummaryProcessor {
 	
 	WeatherSummary weatherFromLine(String line) throws NumberFormatException, MissingDataException {
 		WeatherSummary summary 
-			= new WeatherSummary(Integer.parseInt(line.substring(0, 6).trim()),
+			= new WeatherSummary(line.substring(0, 6).trim(),
 				                      Short.parseShort(line.substring(14, 18).trim()),
 				                      Byte.parseByte(line.substring(18, 20).trim()),
 				                      Byte.parseByte(line.substring(20, 22).trim()),

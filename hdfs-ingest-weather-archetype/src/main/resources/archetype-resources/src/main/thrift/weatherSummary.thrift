@@ -1,7 +1,7 @@
 namespace java edu.uchicago.mpcs53013.weatherSummary
 
 struct WeatherSummary {
-	1: required i32 station;
+	1: required string station;
 	2: required i16 year;
 	3: required byte month;
 	4: required byte day;
