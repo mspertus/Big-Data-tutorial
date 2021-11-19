@@ -729,6 +729,13 @@
       <repository>https://oss.sonatype.org/content/repositories/releases</repository>
       <description>Create a Spark Scala streaming WordCount program that reads from Kafka</description>
     </archetype>
+    <archetype>
+      <groupId>edu.uchicago.mpcs53013</groupId>
+      <artifactId>speed-layer-weather-archetype</artifactId>
+      <version>7.0.0</version>
+      <repository>https://oss.sonatype.org/content/repositories/releases</repository>
+      <description>Create a Spark Scala streaming program that reads simulated weather reports from Kafka and stores them in the latest_weather table in HBase</description>
+    </archetype>
   </archetypes>
 
 </archetype-catalog>
