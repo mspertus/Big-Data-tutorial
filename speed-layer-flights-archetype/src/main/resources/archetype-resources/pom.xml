@@ -14,7 +14,7 @@
       <plugin>
 	<groupId>net.alchim31.maven</groupId>
 	<artifactId>scala-maven-plugin</artifactId>
-        <version>4.4.0</version>
+        <version>4.5.4</version>
 	<executions>
 	  <execution>
 	    <id>compile</id>
@@ -95,7 +95,7 @@
 		  <pluginExecutionFilter>
 		    <groupId>net.alchim31.maven</groupId>
 		    <artifactId>scala-maven-plugin</artifactId>
-		    <versionRange>[3.3.1,)</versionRange>
+		    <version>4.5.4</version>
 		    <goals>
 		      <goal>compile</goal>
 		      <goal>testCompile</goal>
@@ -115,42 +115,42 @@
   <dependencies>
 	  <dependency>
 		  <groupId>org.apache.spark</groupId>
-		  <artifactId>spark-core_2.12</artifactId>
-		  <version>3.0.0</version>
+		  <artifactId>spark-core_2.11</artifactId>
+		  <version>2.4.7</version>
 		  <scope>provided</scope>
 	  </dependency>
 	  <dependency>
 		  <groupId>org.apache.spark</groupId>
-		  <artifactId>spark-sql_2.12</artifactId>
-		  <version>3.0.0</version>
+		  <artifactId>spark-sql_2.11</artifactId>
+		  <version>2.4.7</version>
 		  <scope>provided</scope>
 	  </dependency>
 	  <dependency>
 		  <groupId>org.apache.spark</groupId>
-		  <artifactId>spark-hive_2.12</artifactId>
-		  <version>3.0.0</version>
+		  <artifactId>spark-hive_2.11</artifactId>
+		  <version>2.4.7</version>
 		  <scope>provided</scope>
 	  </dependency>
 	  <dependency>
 		  <groupId>org.apache.spark</groupId>
-		  <artifactId>spark-streaming_2.12</artifactId>
-		  <version>3.0.0</version>
+		  <artifactId>spark-streaming_2.11</artifactId>
+		  <version>2.4.7</version>
 		  <scope>provided</scope>
 	  </dependency>
 	  <dependency>
 		  <groupId>org.apache.spark</groupId>
-		  <artifactId>spark-streaming-kafka-0-10_2.12</artifactId>
-		  <version>3.0.0</version>
+		  <artifactId>spark-streaming-kafka-0-10_2.11</artifactId>
+		  <version>2.4.7</version>
 	  </dependency>
 	  <dependency>
 		  <groupId>com.fasterxml.jackson.module</groupId>
-		  <artifactId>jackson-module-scala_2.12</artifactId>
+		  <artifactId>jackson-module-scala_2.11</artifactId>
 		  <version>2.11.3</version>
 	  </dependency>
 	  <dependency>
 		  <groupId>org.apache.hbase</groupId>
 		  <artifactId>hbase-client</artifactId>
-		  <version>2.2.5</version>
+		  <version>1.4.13</version>
 	  </dependency>
   </dependencies>
 </project>
