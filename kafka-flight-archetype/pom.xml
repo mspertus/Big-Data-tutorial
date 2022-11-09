@@ -22,7 +22,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>edu.uchicago.mpcs53013</groupId>
   <artifactId>kafka-flight-archetype</artifactId>
-  <version>4.0.0</version>
+  <version>5.0.0</version>
   <packaging>maven-archetype</packaging>
   <name>Kafka Flight Archetype</name>
   <url>http://edu.uchicago.mpcs53013</url>

@@ -103,6 +103,8 @@ public class SerializeWeatherSummary {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (TTransportException e) {
+			throw new RuntimeException(e);
 		}
 	}
 }

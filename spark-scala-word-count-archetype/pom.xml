@@ -4,7 +4,7 @@
 
   <groupId>edu.uchicago.mpcs53013</groupId>
   <artifactId>spark-scala-word-count-archetype</artifactId>
-  <version>4.0.0</version>
+  <version>5.0.0</version>
   <packaging>maven-archetype</packaging>
 
   <name>Spark Scala WordCount Archetype</name>
