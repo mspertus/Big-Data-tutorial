@@ -750,6 +750,13 @@
       <repository>https://oss.sonatype.org/content/repositories/releases</repository>
       <description>Create a Spark Scala streaming WordCount program that reads from Kafka</description>
     </archetype>
+    <archetype>
+      <groupId>edu.uchicago.mpcs53013</groupId>
+      <artifactId>kafka-flight-archetype</artifactId>
+      <version>9.0.0</version>
+      <repository>https://oss.sonatype.org/content/repositories/releases</repository>
+      <description>Ingest real-time flight data from FlightAware into a Kafka topic</description>
+    </archetype>
   </archetypes>
 
 </archetype-catalog>
