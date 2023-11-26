@@ -13,9 +13,9 @@
     </fileSet>
 
     <fileSet filtered="true" packaged="false" encoding="UTF-8">
-      <directory>src/main/thrift</directory>
+      <directory>src/main/avro</directory>
       <includes>
-          <include>*.thrift</include>
+          <include>*.avsc</include>
       </includes>
     </fileSet>
 
