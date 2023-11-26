@@ -22,9 +22,9 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>edu.uchicago.mpcs53013</groupId>
   <artifactId>aws-ingest-weather-archetype</artifactId>
-  <version>9.0.0</version>
+  <version>9.0.2</version>
   <packaging>maven-archetype</packaging>
-  <name>Serialize Weather To Thrift Sequence File Archetype</name>
+  <name>Serialize Weather To AWS S3 bucket Archetype</name>
   <url>http://edu.uchicago.mpcs53013</url>
   <description>Creates an example program that reads NOAA weather and serializes
    to HDFS Thrift sequence files</description>
