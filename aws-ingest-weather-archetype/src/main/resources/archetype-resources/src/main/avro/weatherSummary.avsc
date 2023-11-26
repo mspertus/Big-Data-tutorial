@@ -1,0 +1,20 @@
+{"namespace": "edu.uchicago",
+ "type": "record",
+ "name": "WeatherSummary",
+ "fields": [
+     {"name": "station", "type": "int"},
+     {"name": "year", "type": "int"},
+     {"name": "month", "type": "int"},
+     {"name": "day", "type": "int"},
+     {"name": "meanTemperature", "type": "double"},
+     {"name": "meanVisibility", "type": "double"},
+     {"name": "meanWindSpeed", "type": "double"},
+     {"name": "fog", "type": "boolean"},     
+     {"name": "rain", "type": "boolean"},     
+     {"name": "hail", "type": "boolean"},     
+     {"name": "snow", "type": "boolean"},     
+     {"name": "thunder", "type": "boolean"},     
+     {"name": "tornado", "type": "boolean"}
+ ]
+}
+

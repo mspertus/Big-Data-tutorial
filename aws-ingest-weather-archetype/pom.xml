@@ -21,8 +21,8 @@
 	 >
   <modelVersion>4.0.0</modelVersion>
   <groupId>edu.uchicago.mpcs53013</groupId>
-  <artifactId>hdfs-ingest-weather-archetype</artifactId>
-  <version>8.0.0</version>
+  <artifactId>aws-ingest-weather-archetype</artifactId>
+  <version>9.0.0</version>
   <packaging>maven-archetype</packaging>
   <name>Serialize Weather To Thrift Sequence File Archetype</name>
   <url>http://edu.uchicago.mpcs53013</url>
