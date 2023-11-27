@@ -58,16 +58,17 @@ public class LambdaFunctionHandler implements RequestHandler<S3Event, String> {
             S3Object s3Object = s3.getObject(new GetObjectRequest(
                     srcBucket, srcKey));
             InputStream objectData = s3Object.getObjectContent();
-            File transformed = new File("/tmp/weather.avro");
+            String newName = srcKey.replace(".tar", ".avro");
+            File transformed = new File("/tmp/" + newName);
             transformer.transform(new TarArchiveInputStream(objectData), transformed);
 
             // Upload to S3
-            PutObjectRequest request = new PutObjectRequest("mpcs53014-work", "weather.avro", transformed);
+            PutObjectRequest request = new PutObjectRequest("mpcs53014-work", newName, transformed);
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType("binary/octet-stream");
             request.setMetadata(metadata);
             s3.putObject(request); 
-
+            transformed.delete();
             return contentType;
         } catch (Exception e) {
             e.printStackTrace();
