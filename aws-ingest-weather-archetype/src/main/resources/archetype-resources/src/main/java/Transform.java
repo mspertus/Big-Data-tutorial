@@ -45,7 +45,6 @@ public class Transform {
 			dataFileWriter.create(WeatherSummary.getClassSchema(), outp);
 
 			TarArchiveEntry entry = null;
-			int i = 0;
 			while((entry = is.getNextTarEntry()) != null) {
 				context.getLogger().log(entry.getName());
 				if(!entry.getName().endsWith("gz"))
@@ -55,12 +54,6 @@ public class Transform {
 				context.getLogger().log("header: " + fileReader.readLine());
 				String line = null;
 				while ((line = fileReader.readLine()) != null) {
-					context.getLogger().log("Next Line is: ");
-					context.getLogger().log(line);
-					context.getLogger().log("done${symbol_escape}n");
-					i++;
-					if(i > 10)
-						return;
 					try {
 						dataFileWriter.append(weatherFromLine(line));
 					} catch (MissingDataException e) {

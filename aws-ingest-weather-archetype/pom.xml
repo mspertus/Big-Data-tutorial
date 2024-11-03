@@ -22,7 +22,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>edu.uchicago.mpcs53013</groupId>
   <artifactId>aws-ingest-weather-archetype</artifactId>
-  <version>9.0.4</version>
+  <version>9.0.5</version>
   <packaging>maven-archetype</packaging>
   <name>Serialize Weather To AWS S3 bucket Archetype</name>
   <url>http://edu.uchicago.mpcs53013</url>

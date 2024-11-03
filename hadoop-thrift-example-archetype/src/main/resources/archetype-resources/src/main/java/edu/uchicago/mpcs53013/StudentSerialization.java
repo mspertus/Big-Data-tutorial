@@ -36,7 +36,12 @@ public class StudentSerialization implements Serialization<Student> {
 
 		@Override
 		public void open(InputStream is) throws IOException {
-			protocol = new TJSONProtocol(new TIOStreamTransport(is));
+			try {
+				protocol = new TJSONProtocol(new TIOStreamTransport(is));
+			} catch (TException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 	}
@@ -50,7 +55,12 @@ public class StudentSerialization implements Serialization<Student> {
 
 		@Override
 		public void open(OutputStream os) throws IOException {
-			protocol = new TJSONProtocol(new TIOStreamTransport(os));
+			try {
+				protocol = new TJSONProtocol(new TIOStreamTransport(os));
+			} catch (TException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		@Override
