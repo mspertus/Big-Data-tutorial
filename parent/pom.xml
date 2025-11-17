@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>edu.uchicago.mpcs53013</groupId>
   <artifactId>parent</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
   <packaging>pom</packaging>
   <name>mpcs53013-parent-pom</name>
   <description>Parent POM to handle things like signing and deploying MPCS53013 artifacts to central repository</description>
@@ -15,7 +15,17 @@
   <scm>
 	<url>https://github.com/mspertus/Big-Data-tutorial/parent</url>
   </scm>
-  
+ <distributionManagement>
+    <snapshotRepository>
+        <id>ossrh</id>
+        <url>https://ossrh-staging-api.central.sonatype.com/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+        <id>ossrh</id>
+        <url>https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/</url>
+    </repository>
+</distributionManagement>
+ 
   <licenses>
     <license>
       <name>The MIT License</name>
@@ -32,7 +42,7 @@
 			<extensions>true</extensions>
 			<configuration>
 				<serverId>ossrh</serverId>
-				<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+				<nexusUrl>https://ossrh-staging-api.central.sonatype.com/</nexusUrl>
 				<autoReleaseAfterClose>false</autoReleaseAfterClose>
 			</configuration>
   		</plugin>

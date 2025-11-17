@@ -19,8 +19,6 @@ object StreamFlights {
   val mapper = new ObjectMapper()
   mapper.registerModule(DefaultScalaModule)
   val hbaseConf: Configuration = HBaseConfiguration.create()
-  hbaseConf.set("hbase.zookeeper.property.clientPort", "2181")
-  hbaseConf.set("hbase.zookeeper.quorum", "localhost")
   
   val hbaseConnection = ConnectionFactory.createConnection(hbaseConf)
   val weatherDelaysByRoute = hbaseConnection.getTable(TableName.valueOf("weather_delays_by_route_v2"))

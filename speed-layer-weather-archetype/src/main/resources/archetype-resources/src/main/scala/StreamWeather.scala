@@ -18,8 +18,7 @@ object StreamWeather {
   val mapper = new ObjectMapper()
   mapper.registerModule(DefaultScalaModule)
   val hbaseConf: Configuration = HBaseConfiguration.create()
-  hbaseConf.set("hbase.zookeeper.property.clientPort", "2181")
-  hbaseConf.set("hbase.zookeeper.quorum", "localhost")
+
 
   val hbaseConnection = ConnectionFactory.createConnection(hbaseConf)
   val table = hbaseConnection.getTable(TableName.valueOf("latest_weather"))

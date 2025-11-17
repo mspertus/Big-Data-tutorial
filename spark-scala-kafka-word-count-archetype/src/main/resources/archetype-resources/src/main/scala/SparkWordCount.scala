@@ -57,7 +57,10 @@ object SparkWordCount {
       "value.deserializer" -> classOf[StringDeserializer],
       "group.id" -> "use_a_separate_group_id_for_each_stream",
       "auto.offset.reset" -> "latest",
-      "enable.auto.commit" -> (false: java.lang.Boolean)
+      "enable.auto.commit" -> (false: java.lang.Boolean),
+      "security.protocol" -> "SASL_SSL",
+      "sasl.mechanism"-> "SCRAM-SHA-512",
+      "sasl.jaas.config" -> ("org.apache.kafka.common.security.scram.ScramLoginModule required " + "username=\"mpcs53014-2025\" password=\"Kafka password here\";")
     )
     val stream = KafkaUtils.createDirectStream[String, String](
       ssc, PreferConsistent,
