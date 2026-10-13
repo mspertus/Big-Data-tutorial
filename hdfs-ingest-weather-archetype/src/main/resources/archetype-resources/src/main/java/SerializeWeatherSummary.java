@@ -11,12 +11,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.ListObjectsRequest;
-import com.amazonaws.services.s3.model.ObjectListing;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
 import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
@@ -28,11 +22,16 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.SequenceFile.CompressionType;
 import org.apache.hadoop.io.SequenceFile.Writer;
-import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 import org.apache.thrift.TSerializer;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
+import org.apache.thrift.transport.TTransportException;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.S3Object;
 
 import edu.uchicago.mpcs53013.weatherSummary.WeatherSummary;
 
@@ -55,8 +54,8 @@ public class SerializeWeatherSummary {
 			final Configuration finalConf = new Configuration(conf);
 			final FileSystem fs = FileSystem.get(conf);
 			final TSerializer ser = new TSerializer(new TBinaryProtocol.Factory());
+			final Map<Integer, SequenceFile.Writer> yearMap = new HashMap<Integer, SequenceFile.Writer>();
 			WeatherSummaryProcessor processor = new WeatherSummaryProcessor() {
-				Map<Integer, SequenceFile.Writer> yearMap = new HashMap<Integer, SequenceFile.Writer>();
 				Pattern yearPattern = Pattern.compile("^.*${symbol_escape}${symbol_escape}d+-${symbol_escape}${symbol_escape}d+-(${symbol_escape}${symbol_escape}d+)${symbol_escape}${symbol_escape}.op${symbol_escape}${symbol_escape}.gz");
 				
 				Writer getWriter(String fileName) throws IOException {
@@ -97,6 +96,9 @@ public class SerializeWeatherSummary {
 
 			for (InputStream is : tarFiles) {
 				processor.processNoaaTarFile(is);
+			}
+			for (Writer writer : yearMap.values()) {
+				writer.close();
 			}
 
 
@@ -201,7 +203,6 @@ class InputStreamsForHdfsDirectory implements Iterable<InputStream> {
 }
 
 class InputStreamsForS3Folder implements Iterable<InputStream> {
-	static Logger log = Logger.getLogger("InputStreamsForS3Folder");
 	InputStreamsForS3Folder(String folderName) {
 		String s3Prefix = "s3://";
 		String withoutS3Prefix
@@ -213,7 +214,7 @@ class InputStreamsForS3Folder implements Iterable<InputStream> {
 	}
 	String bucketName;
 	String objectPrefix;
-	AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion(Regions.US_EAST_2).build();
+	S3Client s3 = S3Client.builder().region(Region.US_EAST_2).build();
 	@Override
 	public Iterator<InputStream> iterator() {
 		return new S3InputStreamsIterator();
@@ -223,15 +224,22 @@ class InputStreamsForS3Folder implements Iterable<InputStream> {
 
 		@Override
 		public boolean hasNext() {
-			return objectSummaryIterator.hasNext();
+			return objectIterator.hasNext();
 		}
 
 		@Override
 		public InputStream next() {
-			return s3.getObject(bucketName, objectSummaryIterator.next().getKey()).getObjectContent();
+			return s3.getObject(GetObjectRequest.builder()
+					.bucket(bucketName)
+					.key(objectIterator.next().key())
+					.build());
 		}
 
-		Iterator<S3ObjectSummary> objectSummaryIterator
-				= s3.listObjects(bucketName, objectPrefix).getObjectSummaries().iterator();
+		Iterator<S3Object> objectIterator
+				= s3.listObjectsV2Paginator(ListObjectsV2Request.builder()
+						.bucket(bucketName)
+						.prefix(objectPrefix)
+						.build())
+					.contents().iterator();
 	}
 }
