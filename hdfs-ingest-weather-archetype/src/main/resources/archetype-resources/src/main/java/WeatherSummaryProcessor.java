@@ -4,24 +4,21 @@
 package ${package};
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 
 import edu.uchicago.mpcs53013.weatherSummary.WeatherSummary;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
 
-
+// Reads NOAA Global Surface Summary of the Day (GSOD) yearly archives, such as
+// https://www.ncei.noaa.gov/data/global-summary-of-the-day/archive/2024.tar.gz
+// Each archive is a gzipped tar file with one CSV file per weather station.
 public abstract class WeatherSummaryProcessor {
 	static class MissingDataException extends Exception {
 
@@ -34,60 +31,68 @@ public abstract class WeatherSummaryProcessor {
 	    }
 
 	}
-	
+
+	// The first line of each CSV file names the columns, so we can look up fields by name
+	static final CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
+			.setHeader()
+			.setSkipHeaderRecord(true)
+			.get();
+
 	static double tryToReadMeasurement(String name, String s, String missing) throws MissingDataException {
+		s = s.trim(); // NOAA pads numbers with spaces
 		if(s.equals(missing))
 			throw new MissingDataException(name + ": " + s);
-		return Double.parseDouble(s.trim());
+		return Double.parseDouble(s);
 	}
 
-	void processLine(String line, String archiveEntryName) throws IOException {
+	void processRecord(CSVRecord record) throws IOException {
 		try {
-			processWeatherSummary(weatherFromLine(line), archiveEntryName);
+			processWeatherSummary(weatherFromRecord(record));
 		} catch(MissingDataException e) {
 			// Just ignore lines with missing data
 		}
 	}
 
-	abstract void processWeatherSummary(WeatherSummary summary, String fileName) throws IOException;
-	BufferedReader getFileReader(InputStream is) throws FileNotFoundException, IOException {
-		return new BufferedReader(new InputStreamReader(new GZIPInputStream(is)));
-	}
-	
-	void processNoaaFile(InputStream is, String archiveEntryName) throws IOException {
-		BufferedReader br = getFileReader(is);
-		br.readLine(); // Discard header
-		String line;
-		while((line = br.readLine()) != null) {
-			processLine(line, archiveEntryName);
+	abstract void processWeatherSummary(WeatherSummary summary) throws IOException;
+
+	void processNoaaFile(InputStream is) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+		// Don't close the parser when done, as that would also close the tar file we are reading from
+		for (CSVRecord record : csvFormat.parse(br)) {
+			processRecord(record);
 		}
 	}
 
 	void processNoaaTarFile(InputStream is) throws IOException {
-		TarArchiveInputStream tarArchiveInputStream = new TarArchiveInputStream(is);
+		TarArchiveInputStream tarArchiveInputStream = new TarArchiveInputStream(new GZIPInputStream(is));
 		TarArchiveEntry entry;
-		while ((entry = (TarArchiveEntry)tarArchiveInputStream.getNextEntry()) != null) {
-			if(!entry.getName().endsWith(".gz"))
+		while ((entry = tarArchiveInputStream.getNextEntry()) != null) {
+			if(!entry.getName().endsWith(".csv"))
 				continue;
-			processNoaaFile(tarArchiveInputStream, entry.getName());
+			processNoaaFile(tarArchiveInputStream);
 		}
 	}
-	
-	WeatherSummary weatherFromLine(String line) throws NumberFormatException, MissingDataException {
-		WeatherSummary summary 
-			= new WeatherSummary(line.substring(0, 6).trim(),
-				                      Short.parseShort(line.substring(14, 18).trim()),
-				                      Byte.parseByte(line.substring(18, 20).trim()),
-				                      Byte.parseByte(line.substring(20, 22).trim()),
-				                      tryToReadMeasurement("Mean Temperature", line.substring(24, 30), "9999.9"),
-				                      tryToReadMeasurement("Mean Visibility", line.substring(68, 73), "999.9"),
-				                      tryToReadMeasurement("Mean WindSpeed", line.substring(78, 83), "999.9"),
-				                      line.charAt(132) == '1',
-				                      line.charAt(133) == '1',
-				                      line.charAt(134) == '1',
-				                      line.charAt(135) == '1',
-				                      line.charAt(136) == '1',
-				                      line.charAt(137) == '1');
+
+	WeatherSummary weatherFromRecord(CSVRecord record) throws NumberFormatException, MissingDataException {
+		// STATION is the 6-digit USAF station number followed by the 5-digit WBAN number.
+		// We keep just the USAF number, as the station field always has.
+		String station = record.get("STATION").substring(0, 6);
+		String date = record.get("DATE"); // yyyy-mm-dd
+		String frshtt = record.get("FRSHTT"); // Fog, Rain, Snow, Hail, Thunder, Tornado
+		WeatherSummary summary
+			= new WeatherSummary(station,
+				                      Short.parseShort(date.substring(0, 4)),
+				                      Byte.parseByte(date.substring(5, 7)),
+				                      Byte.parseByte(date.substring(8, 10)),
+				                      tryToReadMeasurement("Mean Temperature", record.get("TEMP"), "9999.9"),
+				                      tryToReadMeasurement("Mean Visibility", record.get("VISIB"), "999.9"),
+				                      tryToReadMeasurement("Mean WindSpeed", record.get("WDSP"), "999.9"),
+				                      frshtt.charAt(0) == '1',
+				                      frshtt.charAt(1) == '1',
+				                      frshtt.charAt(2) == '1',
+				                      frshtt.charAt(3) == '1',
+				                      frshtt.charAt(4) == '1',
+				                      frshtt.charAt(5) == '1');
 		return summary;
 	}
 

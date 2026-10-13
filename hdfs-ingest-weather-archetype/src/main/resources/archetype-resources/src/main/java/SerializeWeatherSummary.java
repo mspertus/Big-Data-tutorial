@@ -8,8 +8,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -56,13 +54,7 @@ public class SerializeWeatherSummary {
 			final TSerializer ser = new TSerializer(new TBinaryProtocol.Factory());
 			final Map<Integer, SequenceFile.Writer> yearMap = new HashMap<Integer, SequenceFile.Writer>();
 			WeatherSummaryProcessor processor = new WeatherSummaryProcessor() {
-				Pattern yearPattern = Pattern.compile("^.*${symbol_escape}${symbol_escape}d+-${symbol_escape}${symbol_escape}d+-(${symbol_escape}${symbol_escape}d+)${symbol_escape}${symbol_escape}.op${symbol_escape}${symbol_escape}.gz");
-				
-				Writer getWriter(String fileName) throws IOException {
-					Matcher yearMatcher = yearPattern.matcher(fileName);
-					if(!yearMatcher.find())
-						throw new IllegalArgumentException("Bad file name. Can't find year: " + fileName);
-					int year = Integer.parseInt(yearMatcher.group(1));
+				Writer getWriter(int year) throws IOException {
 					if(!yearMap.containsKey(year)) {
 						yearMap.put(year, 
 								SequenceFile.createWriter(finalConf,
@@ -76,9 +68,9 @@ public class SerializeWeatherSummary {
 				}
 
 				@Override
-				void processWeatherSummary(WeatherSummary summary, String fileName) throws IOException {
+				void processWeatherSummary(WeatherSummary summary) throws IOException {
 					try {
-						getWriter(fileName).append(new IntWritable(1), new BytesWritable(ser.serialize(summary)));;
+						getWriter(summary.getYear()).append(new IntWritable(1), new BytesWritable(ser.serialize(summary)));;
 					} catch (TException e) {
 						throw new IOException(e);
 					}
