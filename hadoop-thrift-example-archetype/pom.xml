@@ -22,7 +22,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>edu.uchicago.mpcs53013</groupId>
   <artifactId>hadoop-thrift-example-archetype</artifactId>
-  <version>8.0.0</version>
+  <version>8.0.1</version>
   <packaging>maven-archetype</packaging>
   <name>Hadoop Thrift Example Archetype</name>
   <url>http://edu.uchicago.mpcs53013</url>
