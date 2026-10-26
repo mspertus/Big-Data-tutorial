@@ -4,7 +4,7 @@
 
   <groupId>edu.uchicago.mpcs53013</groupId>
   <artifactId>spark-scala-word-count-archetype</artifactId>
-  <version>9.0.0</version>
+  <version>10.0.0</version>
   <packaging>maven-archetype</packaging>
 
   <name>Spark Scala WordCount Archetype</name>
@@ -12,8 +12,14 @@
   <parent>
     <groupId>edu.uchicago.mpcs53013</groupId>
     <artifactId>parent</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
   </parent>
+  <developers>
+    <developer>
+      <name>Mike Spertus</name>
+      <email>mike@spertus.com</email>
+    </developer>
+  </developers>
   <scm>
     <url>https://github.com/mspertus/Big-Data-tutorial</url>
   </scm>
