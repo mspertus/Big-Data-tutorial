@@ -5,6 +5,9 @@
   <artifactId>${artifactId}</artifactId>
   <version>${version}</version>
   <name>${artifactId}</name>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
   <build>
     <sourceDirectory>src/main/scala</sourceDirectory>
     <testSourceDirectory>src/test/scala</testSourceDirectory>
@@ -14,7 +17,7 @@
       <plugin>
 	<groupId>net.alchim31.maven</groupId>
 	<artifactId>scala-maven-plugin</artifactId>
-        <version>3.3.1</version>
+        <version>4.10.0</version>
 	<executions>
 	  <execution>
 	    <id>compile</id>
@@ -40,16 +43,16 @@
       </plugin>
       <plugin>
 	<artifactId>maven-compiler-plugin</artifactId>
+	<version>3.13.0</version>
 	<configuration>
-	  <source>1.7</source>
-	  <target>1.7</target>
+	  <release>17</release>
 	</configuration>
       </plugin>
       <!-- for fatjar -->
       <plugin>
 	<groupId>org.apache.maven.plugins</groupId>
 	<artifactId>maven-assembly-plugin</artifactId>
-	<version>3.1.0</version>
+	<version>3.8.0</version>
 	<configuration>
 	  <descriptorRefs>
 	    <descriptorRef>jar-with-dependencies</descriptorRef>
@@ -70,6 +73,7 @@
       <plugin>
 	<groupId>org.apache.maven.plugins</groupId>
 	<artifactId>maven-jar-plugin</artifactId>
+	<version>3.5.1</version>
 	<configuration>
 	  <archive>
 	    <manifest>
@@ -116,13 +120,13 @@
 	<dependency>
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-core_2.12</artifactId>
-      <version>2.4.8</version>
+      <version>3.5.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-streaming_2.12</artifactId>
-      <version>2.4.8</version>
+      <version>3.5.0</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
