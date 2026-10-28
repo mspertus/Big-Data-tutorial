@@ -32,7 +32,7 @@ public class StreamFlightsIntoKafka {
 			Invocation.Builder bldr
 			  = client.target("https://aeroapi.flightaware.com/aeroapi/operators/UAL/flights/enroute")
 					   .request("application/json")
-					   .header("x-apikey", "nP8CzAyE5IW0LQu0VvcLV4a3Cef4HpLA");
+					   .header("x-apikey", "Your API key here");
 			try {
 				return  bldr.get(EnrouteFlights.class);
 			} catch (Exception e) {
@@ -60,6 +60,11 @@ public class StreamFlightsIntoKafka {
 			props.put("buffer.memory", 33554432);
 			props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 			props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+			props.put("security.protocol", "SASL_SSL");
+			// MSK IAM authentication uses the AWS credentials of the machine we run on (e.g., the EMR instance role)
+			props.put("sasl.mechanism", "AWS_MSK_IAM");
+			props.put("sasl.jaas.config", "software.amazon.msk.auth.iam.IAMLoginModule required;");
+			props.put("sasl.client.callback.handler.class", "software.amazon.msk.auth.iam.IAMClientCallbackHandler");
 
 			producer = new KafkaProducer<>(props);
 		}
@@ -73,6 +78,9 @@ public class StreamFlightsIntoKafka {
 			ObjectMapper mapper = new ObjectMapper();
 			System.out.println("running");
 			for(Enroute enroute : enrouteFlights.getEnroute()) {
+				// Skip flights FlightAware has no delay for. An exception here would stop the Timer.
+				if(enroute.getDepartureDelay() == null)
+					continue;
 				ProducerRecord<String, String> data;
 				try {
 					KafkaFlightRecord kfr = new KafkaFlightRecord(

@@ -4,46 +4,54 @@
   <groupId>${groupId}</groupId>
   <artifactId>${artifactId}</artifactId>
   <version>${version}</version>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>org.glassfish.jersey.core</groupId>
       <artifactId>jersey-client</artifactId>
-      <version>2.27</version>
+      <version>2.48</version>
     </dependency>
     <dependency>
       <groupId>org.glassfish.jersey.media</groupId>
       <artifactId>jersey-media-json-jackson</artifactId>
-      <version>2.27</version>
+      <version>2.48</version>
     </dependency>
     <dependency>
       <groupId>org.glassfish.jersey.inject</groupId>
       <artifactId>jersey-hk2</artifactId>
-      <version>2.27</version>
+      <version>2.48</version>
     </dependency>
     <dependency>
-        <groupId>org.apache.kafka</groupId>
-        <artifactId>kafka_2.12</artifactId>
-        <version>2.6.2</version>
+      <groupId>org.apache.kafka</groupId>
+      <artifactId>kafka-clients</artifactId>
+      <version>3.9.2</version>
+    </dependency>
+    <dependency>
+      <groupId>software.amazon.msk</groupId>
+      <artifactId>aws-msk-iam-auth</artifactId>
+      <version>2.3.9</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>1.7.25</version>
+      <artifactId>slf4j-simple</artifactId>
+      <version>1.7.36</version>
     </dependency>
   </dependencies>
   <build>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.7.0</version>
+        <version>3.13.0</version>
         <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
+          <release>17</release>
         </configuration>
       </plugin>
       <plugin>
 	<groupId>org.apache.maven.plugins</groupId>
 	<artifactId>maven-shade-plugin</artifactId>
+	<version>3.6.0</version>
 	<executions>
 	  <execution>
 	    <phase>package</phase>
@@ -54,8 +62,25 @@
 	</executions>
 	<configuration>
 	  <finalName>uber-${artifactId}-${version}</finalName>
+	  <transformers>
+	    <!-- Jersey finds its JSON support through META-INF/services files, so merge them -->
+	    <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+	    <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+	      <mainClass>${package}.StreamFlightsIntoKafka</mainClass>
+	    </transformer>
+	  </transformers>
+	  <filters>
+	    <filter>
+	      <artifact>*:*</artifact>
+	      <excludes>
+		<exclude>META-INF/*.SF</exclude>
+		<exclude>META-INF/*.DSA</exclude>
+		<exclude>META-INF/*.RSA</exclude>
+	      </excludes>
+	    </filter>
+	  </filters>
 	</configuration>
-      </plugin> 
+      </plugin>
     </plugins>
   </build>
 </project>
