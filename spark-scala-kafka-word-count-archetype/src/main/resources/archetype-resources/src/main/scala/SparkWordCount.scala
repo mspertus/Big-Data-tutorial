@@ -59,8 +59,10 @@ object SparkWordCount {
       "auto.offset.reset" -> "latest",
       "enable.auto.commit" -> (false: java.lang.Boolean),
       "security.protocol" -> "SASL_SSL",
-      "sasl.mechanism"-> "SCRAM-SHA-512",
-      "sasl.jaas.config" -> ("org.apache.kafka.common.security.scram.ScramLoginModule required " + "username=\"mpcs53014-2025\" password=\"Kafka password here\";")
+      // MSK IAM authentication uses the AWS credentials of the machine we run on (e.g., the EMR instance role)
+      "sasl.mechanism" -> "AWS_MSK_IAM",
+      "sasl.jaas.config" -> "software.amazon.msk.auth.iam.IAMLoginModule required;",
+      "sasl.client.callback.handler.class" -> "software.amazon.msk.auth.iam.IAMClientCallbackHandler"
     )
     val stream = KafkaUtils.createDirectStream[String, String](
       ssc, PreferConsistent,
