@@ -5,7 +5,6 @@ import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
 import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
 import org.apache.spark.streaming.kafka010._
 import com.fasterxml.jackson.databind.{ DeserializationFeature, ObjectMapper }
-import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.hbase.TableName
@@ -50,9 +49,10 @@ object StreamWeather {
       "auto.offset.reset" -> "latest",
       "enable.auto.commit" -> (false: java.lang.Boolean),
       "security.protocol" -> "SASL_SSL",
-      "sasl.mechanism" -> "SCRAM-SHA-512",
-      "sasl.jaas.config" -> ("org.apache.kafka.common.security.scram.ScramLoginModule required " + "username=\"mpcs53014-2025\" password=\"Kafka password here\";")
-
+      // MSK IAM authentication uses the AWS credentials of the machine we run on (e.g., the EMR instance role)
+      "sasl.mechanism" -> "AWS_MSK_IAM",
+      "sasl.jaas.config" -> "software.amazon.msk.auth.iam.IAMLoginModule required;",
+      "sasl.client.callback.handler.class" -> "software.amazon.msk.auth.iam.IAMClientCallbackHandler"
     )
     val stream = KafkaUtils.createDirectStream[String, String](
       ssc, PreferConsistent,
