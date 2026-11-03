@@ -5,7 +5,6 @@ import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
 import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
 import org.apache.spark.streaming.kafka010._
 import com.fasterxml.jackson.databind.{ DeserializationFeature, ObjectMapper }
-import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.hbase.TableName
@@ -66,11 +65,11 @@ object StreamFlights {
       inc.addColumn(Bytes.toBytes("delay"), Bytes.toBytes("hail_flights"), 1)
       inc.addColumn(Bytes.toBytes("delay"), Bytes.toBytes("hail_delays"), kfr.departureDelay)
     }
-    if(latestWeather.hail) {
+    if(latestWeather.thunder) {
       inc.addColumn(Bytes.toBytes("delay"), Bytes.toBytes("thunder_flights"), 1)
       inc.addColumn(Bytes.toBytes("delay"), Bytes.toBytes("thunder_delays"), kfr.departureDelay)
     }
-    if(latestWeather.hail) {
+    if(latestWeather.tornado) {
       inc.addColumn(Bytes.toBytes("delay"), Bytes.toBytes("tornado_flights"), 1)
       inc.addColumn(Bytes.toBytes("delay"), Bytes.toBytes("tornado_delays"), kfr.departureDelay)
     }
@@ -103,7 +102,12 @@ object StreamFlights {
       "value.deserializer" -> classOf[StringDeserializer],
       "group.id" -> "use_a_separate_group_id_for_each_stream",
       "auto.offset.reset" -> "latest",
-      "enable.auto.commit" -> (false: java.lang.Boolean)
+      "enable.auto.commit" -> (false: java.lang.Boolean),
+      "security.protocol" -> "SASL_SSL",
+      // MSK IAM authentication uses the AWS credentials of the machine we run on (e.g., the EMR instance role)
+      "sasl.mechanism" -> "AWS_MSK_IAM",
+      "sasl.jaas.config" -> "software.amazon.msk.auth.iam.IAMLoginModule required;",
+      "sasl.client.callback.handler.class" -> "software.amazon.msk.auth.iam.IAMClientCallbackHandler"
     )
     val stream = KafkaUtils.createDirectStream[String, String](
       ssc, PreferConsistent,
